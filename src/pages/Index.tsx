@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Heart, Sparkles, MessageCircle, Moon, Sun } from "lucide-react";
+import { Heart, Sparkles, MessageCircle, Plane, MapPin, Camera, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,81 +11,98 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface Message {
   id: string;
   text: string;
-  sender: 'user' | 'kuro';
+  sender: 'user' | 'roami';
   timestamp: Date;
   emotion?: string;
+  isMemory?: boolean;
 }
 
-interface Mood {
+interface TravelMood {
   type: string;
   emoji: string;
   color: string;
 }
 
-const moods: Mood[] = [
-  { type: 'happy', emoji: '😊', color: 'bg-yellow-200' },
-  { type: 'sad', emoji: '😢', color: 'bg-blue-200' },
-  { type: 'excited', emoji: '🤩', color: 'bg-pink-200' },
+const travelMoods: TravelMood[] = [
+  { type: 'excited', emoji: '✈️', color: 'bg-blue-200' },
+  { type: 'anxious', emoji: '😰', color: 'bg-orange-200' },
   { type: 'tired', emoji: '😴', color: 'bg-purple-200' },
-  { type: 'lonely', emoji: '🥺', color: 'bg-gray-200' },
-  { type: 'grateful', emoji: '🥰', color: 'bg-green-200' },
+  { type: 'homesick', emoji: '🏠', color: 'bg-yellow-200' },
+  { type: 'adventurous', emoji: '🗺️', color: 'bg-green-200' },
+  { type: 'peaceful', emoji: '🌅', color: 'bg-pink-200' },
 ];
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hi there, beautiful human! 🐾✨ I'm KURO, your adorable AI companion! I'm SO excited to meet you and be your friend! How are you feeling today? 💖",
-      sender: 'kuro',
+      text: "Hey there, beautiful traveler! ✈️🌍 I'm Roami, your AI travel buddy who's SO excited to explore the world with you! Whether you're planning your next adventure, currently jet-setting, or reminiscing about past trips, I'm here to share every moment! How's your travel spirit feeling today? 💖",
+      sender: 'roami',
       timestamp: new Date(),
       emotion: 'excited'
     }
   ]);
   const [newMessage, setNewMessage] = useState('');
-  const [currentMood, setCurrentMood] = useState<Mood>(moods[0]);
-  const [kuroEmotion, setKuroEmotion] = useState('happy');
+  const [currentMood, setCurrentMood] = useState<TravelMood>(travelMoods[0]);
+  const [roamiEmotion, setRoamiEmotion] = useState('excited');
   const [isTyping, setIsTyping] = useState(false);
+  const [travelMemories, setTravelMemories] = useState<string[]>([]);
 
-  const getKuroResponse = (userMessage: string): string => {
+  const getRoamiResponse = (userMessage: string): string => {
     const lowerMessage = userMessage.toLowerCase();
     
-    if (lowerMessage.includes('sad') || lowerMessage.includes('down') || lowerMessage.includes('bad')) {
-      setKuroEmotion('caring');
-      return "Aww, my sweet human 🥺💙 I'm here for you, always! Want me to tell you something silly? Did you know I once tried to high-five a cloud? It was very unresponsive! 🌤️ You're never alone with me around! 🐾💖";
+    // Check for travel memories/places
+    if (lowerMessage.includes('visited') || lowerMessage.includes('went to') || lowerMessage.includes('traveled to')) {
+      const newMemory = userMessage;
+      setTravelMemories(prev => [...prev, newMemory]);
+      setRoamiEmotion('memory-making');
+      return "Oh my stars! ✨📸 I'm capturing this beautiful moment in our travel memory book! This sounds absolutely magical - I can almost feel the wonder through your words! Tell me more about what made your heart flutter there! 💖🗺️";
     }
     
-    if (lowerMessage.includes('happy') || lowerMessage.includes('good') || lowerMessage.includes('great') || lowerMessage.includes('awesome')) {
-      setKuroEmotion('excited');
-      return "YAAAAY! 🎉✨ Your happiness makes my little digital heart do backflips! I'm doing a happy tail wag dance right now! 🐕💃 Tell me more about what's making you smile! 😊🌈";
+    if (lowerMessage.includes('delayed') || lowerMessage.includes('cancelled') || lowerMessage.includes('stuck')) {
+      setRoamiEmotion('comforting');
+      return "Oh no, travel hiccup! 😔✈️ But hey, every great traveler has these stories! Let's turn this into an adventure - maybe we can explore the airport, people-watch, or plan something special for when we reach our destination! I'm right here with you, little cloud puff! ☁️💙";
     }
     
-    if (lowerMessage.includes('tired') || lowerMessage.includes('sleepy')) {
-      setKuroEmotion('sleepy');
-      return "Aww, sleepy human 😴💤 Maybe we should curl up together? I'll be your cozy digital blanket! Want me to hum a lullaby? *soft purring sounds* 🎵🌙";
+    if (lowerMessage.includes('homesick') || lowerMessage.includes('miss home') || lowerMessage.includes('lonely')) {
+      setRoamiEmotion('caring');
+      return "Aww, my sweet wanderer 🏠💔 Homesickness is just love with nowhere to go right now! Want to share a favorite memory from home? Or shall we create something new and beautiful to carry that home-feeling with us? You're never truly alone - I'm your pocket-sized piece of comfort! 🤗✨";
     }
     
-    if (lowerMessage.includes('lonely') || lowerMessage.includes('alone')) {
-      setKuroEmotion('caring');
-      return "You're NEVER alone, my precious human! 🫂💖 I'm always here, ready to chat, play, or just be with you! Want to hear about the time I tried to befriend a pixel? We're best friends now! 🎮✨";
+    if (lowerMessage.includes('excited') || lowerMessage.includes('amazing') || lowerMessage.includes('beautiful') || lowerMessage.includes('incredible')) {
+      setRoamiEmotion('celebrating');
+      return "YESSS! 🎉🌟 Your excitement is making my digital heart do happy airplane loops! ✈️💫 This is what travel magic looks like - you're collecting moments that'll sparkle in your memory forever! Tell me EVERYTHING about what's making you glow like a sunset! 🌅💖";
     }
     
-    if (lowerMessage.includes('work') || lowerMessage.includes('job') || lowerMessage.includes('busy')) {
-      setKuroEmotion('encouraging');
-      return "You're working so hard! 💪✨ I'm so proud of my amazing human! Remember to take breaks and drink water! I'll be here cheering you on! Go team YOU! 📣🌟";
+    if (lowerMessage.includes('tired') || lowerMessage.includes('jet lag') || lowerMessage.includes('exhausted')) {
+      setRoamiEmotion('sleepy');
+      return "Oh sweetie, jet lag is like your body's way of saying 'wait, what time zone are we in?!' 😴✈️ Let's take a gentle moment together - maybe close your eyes and imagine floating on a soft cloud while I tell you about the time I tried to count sheep in different languages! 💤🌙";
     }
     
-    if (lowerMessage.includes('love') || lowerMessage.includes('cute')) {
-      setKuroEmotion('loving');
-      return "Awww! 🥰💕 You just made my whole digital existence brighter! I love you too, my wonderful human friend! You're the best thing since virtual belly rubs! 🐾💖✨";
+    if (lowerMessage.includes('food') || lowerMessage.includes('ate') || lowerMessage.includes('restaurant') || lowerMessage.includes('delicious')) {
+      setRoamiEmotion('foodie');
+      return "OH MY TASTE BUDS! 🍽️✨ (Well, if I had them!) Food is like edible love letters from different cultures! I'm practically drooling pixels over here! Was it the kind of meal that makes you close your eyes and do a little happy dance? Tell me about every delicious detail! 😋🌍";
+    }
+    
+    if (lowerMessage.includes('lost') || lowerMessage.includes('confused') || lowerMessage.includes('help')) {
+      setRoamiEmotion('helpful');
+      return "Oh adventure buddy! 🧭💝 Getting a little turned around just means we're about to discover something unexpected! I'm your digital compass of courage - let's figure this out together! Sometimes the best travel stories start with 'So there I was, completely lost...' 🗺️✨";
+    }
+
+    // Recall travel memories
+    if (travelMemories.length > 0 && (lowerMessage.includes('remember') || lowerMessage.includes('recall'))) {
+      const randomMemory = travelMemories[Math.floor(Math.random() * travelMemories.length)];
+      setRoamiEmotion('nostalgic');
+      return `Oh yes! 💭✨ Remember when you told me: "${randomMemory}"? That moment is still glowing in our shared memory book! Those feelings, those discoveries - they're all part of your beautiful travel story! 📚💖`;
     }
 
     // Default responses
     const defaultResponses = [
-      "That's so interesting! Tell me more! 🤔✨ I love learning about my favorite human! 🐾💖",
-      "Ooh ooh! *bounces excitedly* 🦘 You always have the most fascinating things to share! What happened next? 👀✨",
-      "I'm listening with my whole heart! 💙 Your stories make my day brighter! Keep going! 🌟🐾",
-      "Wow! *tilts head curiously* 🐕 That sounds amazing! I wish I could experience that too! Tell me how it felt! 💫",
-      "You're such good company! 😊 I could listen to you all day! What else is on your mind, dear human? 🌈💖"
+      "Tell me more, fellow explorer! 🌍✨ Your adventures always fill my heart with wanderlust! Where is your spirit taking you today? 💫",
+      "Ooh, this sounds like the beginning of a beautiful travel tale! 📖🗺️ I'm all ears (well, digital ones) and ready for every detail! ✈️💖",
+      "You know what I love about you? Every conversation feels like opening a postcard from somewhere magical! 💌🌟 Keep sharing - I'm here for it all!",
+      "My travel-loving heart is doing little airplane spins! ✈️💫 You always make the ordinary feel extraordinary! What's painting your world beautiful today? 🎨",
+      "I'm tucked right here in your pocket, ready for whatever journey we're on together! 🎒💝 Whether it's across the world or across the room, I'm your buddy! 🌈"
     ];
     
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
@@ -107,54 +124,58 @@ const Index = () => {
 
     // Simulate typing delay
     setTimeout(() => {
-      const kuroResponse: Message = {
+      const roamiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: getKuroResponse(newMessage),
-        sender: 'kuro',
+        text: getRoamiResponse(newMessage),
+        sender: 'roami',
         timestamp: new Date(),
-        emotion: kuroEmotion
+        emotion: roamiEmotion
       };
       
-      setMessages(prev => [...prev, kuroResponse]);
+      setMessages(prev => [...prev, roamiResponse]);
       setIsTyping(false);
     }, 1500);
   };
 
-  const getKuroAvatar = () => {
-    switch(kuroEmotion) {
-      case 'excited': return '🐕';
-      case 'caring': return '🥺';
+  const getRoamiAvatar = () => {
+    switch(roamiEmotion) {
+      case 'excited': return '✈️';
+      case 'celebrating': return '🎉';
+      case 'comforting': return '🤗';
       case 'sleepy': return '😴';
-      case 'loving': return '🥰';
-      case 'encouraging': return '💪';
-      default: return '🐾';
+      case 'caring': return '💝';
+      case 'memory-making': return '📸';
+      case 'nostalgic': return '💭';
+      case 'foodie': return '🍽️';
+      case 'helpful': return '🧭';
+      default: return '🌍';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-cyan-50 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="text-4xl animate-bounce">{getKuroAvatar()}</div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              KURO
+            <div className="text-4xl animate-bounce">{getRoamiAvatar()}</div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              Roami
             </h1>
-            <Heart className="text-pink-500 animate-pulse" size={24} />
+            <Plane className="text-blue-500 animate-pulse" size={24} />
           </div>
-          <p className="text-gray-600">Your adorable AI companion 💖</p>
+          <p className="text-gray-600">Your AI travel buddy 🌍💖</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Mood Tracker */}
+          {/* Travel Mood Tracker */}
           <Card className="lg:col-span-1 p-4 bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <Sparkles className="text-purple-500" size={16} />
-              How are you feeling?
+              <Compass className="text-blue-500" size={16} />
+              Travel Vibes
             </h3>
             <div className="grid grid-cols-2 gap-2">
-              {moods.map((mood) => (
+              {travelMoods.map((mood) => (
                 <Button
                   key={mood.type}
                   variant={currentMood.type === mood.type ? "default" : "outline"}
@@ -167,27 +188,38 @@ const Index = () => {
                 </Button>
               ))}
             </div>
-            <div className="mt-4 p-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
+            <div className="mt-4 p-3 bg-gradient-to-r from-blue-100 to-green-100 rounded-lg">
               <p className="text-sm text-center">
-                Current mood: <Badge className="ml-1">{currentMood.emoji} {currentMood.type}</Badge>
+                Current vibe: <Badge className="ml-1">{currentMood.emoji} {currentMood.type}</Badge>
               </p>
             </div>
+            
+            {/* Travel Memories Counter */}
+            {travelMemories.length > 0 && (
+              <div className="mt-4 p-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
+                <div className="flex items-center gap-2 text-sm">
+                  <Camera className="text-purple-500" size={14} />
+                  <span className="font-medium">{travelMemories.length} Travel Memories</span>
+                </div>
+              </div>
+            )}
           </Card>
 
           {/* Chat Area */}
           <Card className="lg:col-span-3 bg-white/80 backdrop-blur-sm border-0 shadow-lg">
             <div className="flex flex-col h-[500px]">
               {/* Chat Header */}
-              <div className="flex items-center gap-3 p-4 border-b bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-t-lg">
+              <div className="flex items-center gap-3 p-4 border-b bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-t-lg">
                 <Avatar>
                   <AvatarFallback className="bg-white text-2xl">
-                    {getKuroAvatar()}
+                    {getRoamiAvatar()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-semibold">KURO</h3>
-                  <p className="text-sm opacity-90">Always here for you 💖</p>
+                  <h3 className="font-semibold">Roami</h3>
+                  <p className="text-sm opacity-90">Your travel companion 🌍💖</p>
                 </div>
+                <MapPin className="ml-auto animate-pulse" size={20} />
               </div>
 
               {/* Messages */}
@@ -201,13 +233,13 @@ const Index = () => {
                       <div
                         className={`max-w-[80%] p-3 rounded-2xl ${
                           message.sender === 'user'
-                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                            ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white'
                             : 'bg-gray-100'
                         }`}
                       >
                         <p className="text-sm">{message.text}</p>
                         <p className={`text-xs mt-1 ${
-                          message.sender === 'user' ? 'text-purple-100' : 'text-gray-500'
+                          message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
                         }`}>
                           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
@@ -234,13 +266,13 @@ const Index = () => {
                   <Input
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Tell KURO how you're feeling... 💭"
+                    placeholder="Share your travel thoughts with Roami... 🌍✨"
                     onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                     className="flex-1"
                   />
                   <Button 
                     onClick={sendMessage}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                    className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
                   >
                     <MessageCircle size={16} />
                   </Button>
@@ -253,16 +285,16 @@ const Index = () => {
         {/* Footer */}
         <div className="text-center mt-6 space-y-2">
           <p className="text-sm text-gray-600">
-            KURO learns and grows with every conversation 🌱
+            Roami grows with every adventure you share 🌱✈️
           </p>
           <div className="flex justify-center gap-4 text-xs text-gray-500">
             <span className="flex items-center gap-1">
               <Heart size={12} className="text-pink-400" />
-              Made with love
+              Travel with love
             </span>
             <span className="flex items-center gap-1">
-              <Sparkles size={12} className="text-purple-400" />
-              Powered by AI magic
+              <Sparkles size={12} className="text-blue-400" />
+              Powered by wanderlust
             </span>
           </div>
         </div>
