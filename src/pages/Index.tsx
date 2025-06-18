@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Heart, Sparkles, MessageCircle, Plane, MapPin, Camera, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,12 +23,12 @@ interface TravelMood {
 }
 
 const travelMoods: TravelMood[] = [
-  { type: 'excited', emoji: '✈️', color: 'bg-blue-200' },
-  { type: 'anxious', emoji: '😰', color: 'bg-orange-200' },
-  { type: 'tired', emoji: '😴', color: 'bg-purple-200' },
-  { type: 'homesick', emoji: '🏠', color: 'bg-yellow-200' },
-  { type: 'adventurous', emoji: '🗺️', color: 'bg-green-200' },
-  { type: 'peaceful', emoji: '🌅', color: 'bg-pink-200' },
+  { type: 'excited', emoji: '✈️', color: 'bg-green-500/20 border-green-400/30' },
+  { type: 'anxious', emoji: '😰', color: 'bg-emerald-500/20 border-emerald-400/30' },
+  { type: 'tired', emoji: '😴', color: 'bg-teal-500/20 border-teal-400/30' },
+  { type: 'homesick', emoji: '🏠', color: 'bg-green-600/20 border-green-500/30' },
+  { type: 'adventurous', emoji: '🗺️', color: 'bg-lime-500/20 border-lime-400/30' },
+  { type: 'peaceful', emoji: '🌅', color: 'bg-emerald-600/20 border-emerald-500/30' },
 ];
 
 const Index = () => {
@@ -153,52 +152,64 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-cyan-50 p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-emerald-950 p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 via-transparent to-emerald-400/5"></div>
+      <div className="absolute top-0 left-0 w-72 h-72 bg-green-400/5 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="text-4xl animate-bounce">{getRoamiAvatar()}</div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="text-5xl animate-bounce filter drop-shadow-lg">{getRoamiAvatar()}</div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">
               Roami
             </h1>
-            <Plane className="text-blue-500 animate-pulse" size={24} />
+            <Plane className="text-green-400 animate-pulse drop-shadow-lg" size={28} />
           </div>
-          <p className="text-gray-600">Your AI travel buddy 🌍💖</p>
+          <p className="text-gray-300 text-lg font-medium">Your AI travel buddy 🌍💖</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Travel Mood Tracker */}
-          <Card className="lg:col-span-1 p-4 bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <Compass className="text-blue-500" size={16} />
+          <Card className="lg:col-span-1 p-6 bg-black/40 backdrop-blur-xl border border-green-500/20 shadow-2xl rounded-3xl">
+            <h3 className="font-semibold mb-4 flex items-center gap-2 text-green-300">
+              <Compass className="text-green-400" size={18} />
               Travel Vibes
             </h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-3">
               {travelMoods.map((mood) => (
                 <Button
                   key={mood.type}
                   variant={currentMood.type === mood.type ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCurrentMood(mood)}
-                  className={`${mood.color} hover:scale-105 transition-transform`}
+                  className={`${mood.color} hover:scale-105 transition-all duration-300 backdrop-blur-sm border rounded-2xl text-gray-200 hover:text-green-200 ${
+                    currentMood.type === mood.type 
+                      ? 'bg-green-500/30 border-green-400/50 shadow-lg shadow-green-500/20' 
+                      : 'bg-gray-800/30 border-gray-600/30 hover:bg-green-500/20'
+                  }`}
                 >
-                  <span className="mr-1">{mood.emoji}</span>
+                  <span className="mr-2 text-lg">{mood.emoji}</span>
                   {mood.type}
                 </Button>
               ))}
             </div>
-            <div className="mt-4 p-3 bg-gradient-to-r from-blue-100 to-green-100 rounded-lg">
-              <p className="text-sm text-center">
-                Current vibe: <Badge className="ml-1">{currentMood.emoji} {currentMood.type}</Badge>
+            <div className="mt-6 p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm rounded-2xl border border-green-400/20">
+              <p className="text-sm text-center text-gray-200">
+                Current vibe: 
+                <Badge className="ml-2 bg-green-500/30 text-green-200 border-green-400/30">
+                  {currentMood.emoji} {currentMood.type}
+                </Badge>
               </p>
             </div>
             
             {/* Travel Memories Counter */}
             {travelMemories.length > 0 && (
-              <div className="mt-4 p-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
-                <div className="flex items-center gap-2 text-sm">
-                  <Camera className="text-purple-500" size={14} />
+              <div className="mt-4 p-4 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm rounded-2xl border border-emerald-400/20">
+                <div className="flex items-center gap-2 text-sm text-gray-200">
+                  <Camera className="text-emerald-400" size={16} />
                   <span className="font-medium">{travelMemories.length} Travel Memories</span>
                 </div>
               </div>
@@ -206,24 +217,24 @@ const Index = () => {
           </Card>
 
           {/* Chat Area */}
-          <Card className="lg:col-span-3 bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="lg:col-span-3 bg-black/40 backdrop-blur-xl border border-green-500/20 shadow-2xl rounded-3xl overflow-hidden">
             <div className="flex flex-col h-[500px]">
               {/* Chat Header */}
-              <div className="flex items-center gap-3 p-4 border-b bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-t-lg">
-                <Avatar>
-                  <AvatarFallback className="bg-white text-2xl">
+              <div className="flex items-center gap-4 p-6 bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border-b border-green-400/20">
+                <Avatar className="w-12 h-12">
+                  <AvatarFallback className="bg-green-500/20 text-2xl border border-green-400/30 backdrop-blur-sm">
                     {getRoamiAvatar()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-semibold">Roami</h3>
-                  <p className="text-sm opacity-90">Your travel companion 🌍💖</p>
+                  <h3 className="font-semibold text-green-300 text-lg">Roami</h3>
+                  <p className="text-sm text-gray-300">Your travel companion 🌍💖</p>
                 </div>
-                <MapPin className="ml-auto animate-pulse" size={20} />
+                <MapPin className="ml-auto animate-pulse text-green-400" size={24} />
               </div>
 
               {/* Messages */}
-              <ScrollArea className="flex-1 p-4">
+              <ScrollArea className="flex-1 p-6">
                 <div className="space-y-4">
                   {messages.map((message) => (
                     <div
@@ -231,15 +242,15 @@ const Index = () => {
                       className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-[80%] p-3 rounded-2xl ${
+                        className={`max-w-[80%] p-4 rounded-3xl backdrop-blur-sm ${
                           message.sender === 'user'
-                            ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white'
-                            : 'bg-gray-100'
+                            ? 'bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white border border-green-400/30 shadow-lg shadow-green-500/20'
+                            : 'bg-gray-800/60 text-gray-200 border border-gray-600/30'
                         }`}
                       >
-                        <p className="text-sm">{message.text}</p>
-                        <p className={`text-xs mt-1 ${
-                          message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                        <p className="text-sm leading-relaxed">{message.text}</p>
+                        <p className={`text-xs mt-2 ${
+                          message.sender === 'user' ? 'text-green-100' : 'text-gray-400'
                         }`}>
                           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
@@ -248,11 +259,11 @@ const Index = () => {
                   ))}
                   {isTyping && (
                     <div className="flex justify-start">
-                      <div className="bg-gray-100 p-3 rounded-2xl">
+                      <div className="bg-gray-800/60 backdrop-blur-sm p-4 rounded-3xl border border-gray-600/30">
                         <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
                       </div>
                     </div>
@@ -261,20 +272,20 @@ const Index = () => {
               </ScrollArea>
 
               {/* Message Input */}
-              <div className="p-4 border-t bg-gray-50">
-                <div className="flex gap-2">
+              <div className="p-6 border-t border-green-400/20 bg-gray-900/50 backdrop-blur-sm">
+                <div className="flex gap-3">
                   <Input
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Share your travel thoughts with Roami... 🌍✨"
                     onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                    className="flex-1"
+                    className="flex-1 bg-gray-800/60 border-gray-600/30 text-gray-200 placeholder:text-gray-400 rounded-2xl backdrop-blur-sm focus:border-green-400/50 focus:ring-green-400/20"
                   />
                   <Button 
                     onClick={sendMessage}
-                    className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-2xl shadow-lg shadow-green-500/20 border border-green-400/20 backdrop-blur-sm transition-all duration-300 hover:scale-105"
                   >
-                    <MessageCircle size={16} />
+                    <MessageCircle size={18} />
                   </Button>
                 </div>
               </div>
@@ -283,17 +294,17 @@ const Index = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6 space-y-2">
-          <p className="text-sm text-gray-600">
+        <div className="text-center mt-8 space-y-3">
+          <p className="text-gray-300 font-medium">
             Roami grows with every adventure you share 🌱✈️
           </p>
-          <div className="flex justify-center gap-4 text-xs text-gray-500">
-            <span className="flex items-center gap-1">
-              <Heart size={12} className="text-pink-400" />
+          <div className="flex justify-center gap-6 text-sm text-gray-400">
+            <span className="flex items-center gap-2">
+              <Heart size={14} className="text-green-400" />
               Travel with love
             </span>
-            <span className="flex items-center gap-1">
-              <Sparkles size={12} className="text-blue-400" />
+            <span className="flex items-center gap-2">
+              <Sparkles size={14} className="text-emerald-400" />
               Powered by wanderlust
             </span>
           </div>
